@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+     
+    <h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>Surveys</title>
+    	<h:outputStylesheet library="css" name="bootstrap.min.css"/>
+    	<h:outputStylesheet library="css" name="styles.css"/>
+    	<h:outputScript library="js" name="bootstrap.min.js"/>
+    	<h:outputScript library="js" name="scripts.js"/>
+    	
+    </h:head>
+     
+    <h:body>
+    
+	    <h:form id="form">
+	    
+	   <div class="navbar navbar-default" id="subnav">
+		    <div class="col-md-12">
+		        <div class="navbar-header">
+		        	<h:commandLink value="New Survey" styleClass="navbar-btn btn btn-default btn-plus dropdown-toggle" action="#{surveyController.pageEdit()}"/>
+		        </div>
+		     </div>	
+		</div>
+	    	 
+			<div class="container" id="main">
+				
+				<div class="row">
+					
+					<div class="col-sm-12">
+						<div class="panel panel-default">
+						
+							<div class="col-sm-12">
+								<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+							</div>
+							
+							<h:panelGroup id="panel">
+							
+								<p:remoteCommand name="atualizarLista" update="panel" actionListener="#{surveyController.visualizarRespostas(surveyController.formulario.entidade)}" />
+							
+								<ui:fragment rendered="#{!surveyController.formulario.mostrarRespostas}">
+								
+									<div class="panel-heading">
+										<h4>Surveys</h4>
+									</div>
+									<div class="panel-body">
+										<div class="list-group">
+											<ui:repeat id="contactsList" value="#{surveyController.formulario.lista}" var="entidade" varStatus="status">
+								                <div class="list-group-item">
+									                <div class="row">
+										                <p:remoteCommand name="verRespostas#{entidade.id}" update="@form" actionListener="#{surveyController.visualizarRespostas(entidade)}" />
+									                	<div class="col-md-12 item break-word" onclick="verRespostas#{entidade.id}()">
+									                		#{entidade.texto} - #{entidade.descricao}
+									                	</div>
+									                </div>
+								                </div>
+											</ui:repeat>
+							            </div>
+									</div>
+									
+								</ui:fragment>
+								
+								<ui:fragment rendered="#{surveyController.formulario.mostrarRespostas}">
+						
+									<div class="panel-heading">
+										<p:commandLink update="@form" styleClass="pull-right" value="Voltar" actionListener="#{surveyController.mostrarEnquetes()}" />
+										<h4>#{surveyController.formulario.entidade.texto} - #{surveyController.formulario.entidade.descricao}</h4>
+									</div>
+									
+									<div class="panel-body">
+									
+										<ui:fragment rendered="#{surveyController.formulario.entidade.tipoEnquete == 'VOTACAO'}">
+											<p:selectOneRadio value="#{optionController.formulario.entidade.id}"  layout="grid" columns="1">
+									            <f:selectItems value="#{surveyController.formulario.entidade.opcoes}" var="opcao" itemLabel="#{opcao.conteudo} - votos: #{opcao.quantidadeVoto}" itemValue="#{opcao.id}"/>
+									        </p:selectOneRadio>
+									        <p:commandButton actionListener="#{optionController.salvar(surveyController.formulario.entidade)}" oncomplete="atualizarLista()" value="Votar" update="@form" title="Votar" />
+										</ui:fragment>
+										
+										<ui:fragment rendered="#{surveyController.formulario.entidade.tipoEnquete == 'RESPOSTA'}">
+										
+											<div class="list-group">
+												<ui:repeat value="#{surveyController.formulario.entidade.listaRespostas}" var="resp" varStatus="status">
+									                <div class="list-group-item">
+										                <div class="row" >
+										                	<div class="col-md-12 break-word" >
+										                		#{resp.texto}
+										                	</div>
+										                </div>
+									                </div>
+												</ui:repeat>
+								            </div>
+								            <hr/>
+								            <div class="col-sm-12" style="text-align: center;">
+												<p:inputTextarea placeholder="Nova resposta" value="#{answerController.formulario.entidade.texto}" style="width:100%"/>
+												<p:commandButton actionListener="#{answerController.salvar(surveyController.formulario.entidade)}" oncomplete="atualizarLista()" value="Salvar" update="@form" title="Salvar" styleClass="pull-right"  />
+								            </div>
+								            
+										</ui:fragment>
+										
+									</div>
+									
+								</ui:fragment>
+								
+							</h:panelGroup>
+							
+						</div>
+						
+					</div>
+					
+				</div>
+				
+			</div>
+			
+		</h:form>
+
+    </h:body>
+     
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+     
+    <h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>Survey Polls</title>
+    	<h:outputStylesheet library="css" name="bootstrap.min.css"/>
+    	<h:outputStylesheet library="css" name="styles.css"/>
+    	<h:outputScript library="js" name="bootstrap.min.js"/>
+    	<h:outputScript library="js" name="scripts.js"/>
+    	
+    </h:head>
+     
+    <h:body>
+    
+    <h:form id="form">
+    
+    	<div class="navbar navbar-default" id="subnav">
+		    <div class="col-md-12">
+		        <div class="navbar-header">
+		        	<h:commandLink value="Surveys" styleClass="navbar-btn btn btn-default btn-plus dropdown-toggle" action="#{surveyController.pageList()}"/>
+		        </div>
+		     </div>	
+		</div>
+    	 
+		<div class="container" id="main">
+			
+			<div class="row">
+			
+				<div class="panel panel-default"> 
+				
+					<div class="col-sm-12">
+						<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+					</div>
+					
+					<div class="panel-heading">
+						<p:commandButton action="#{surveyController.novaEntidade()}" value="Clear" styleClass="pull-right btn btn-default" ajax="false" icon="ui-icon-refresh" />
+						<h4>Add Survey</h4>
+					</div>
+					
+					<div class="panel-body">
+						<div class="form-group">
+						    <label >Name</label>
+						    <h:inputText styleClass="form-control" label="Text" value="#{surveyController.formulario.entidade.texto}"/>
+						</div>
+						<div class="form-group">
+						    <label >Desc</label>
+						    <h:inputText styleClass="form-control" label="Desc" value="#{surveyController.formulario.entidade.descricao}"/>
+						</div>
+						
+						<h:panelGrid columns="2" cellpadding="10">
+							<label>Type Of Survey: </label>
+							<p:selectOneMenu value="#{surveyController.formulario.entidade.tipoEnquete}">
+							  <f:selectItems value="#{surveyController.formulario.tiposEnquete}" var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.chave}"/>
+							  <p:ajax update="fragment" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+						
+						<h:panelGrid id="fragment">
+							<ui:fragment rendered="#{surveyController.formulario.entidade.tipoEnquete == 'VOTACAO'}">
+								<div class="form-group">
+								    <label >Option</label>
+									<h:inputText id="inputOpcao" styleClass="form-control" value="#{surveyController.formulario.opcao.conteudo}"/>
+								</div>
+								<p:commandButton actionListener="#{surveyController.addOpcao()}" value="Add" styleClass="btn btn-default" update="tableOpcao inputOpcao" icon="ui-icon-plus" />
+								<p:dataTable id="tableOpcao" var="opcao" rowIndexVar="index" value="#{surveyController.formulario.entidade.opcoes}">
+									<p:column headerText="Option">
+								        <h:outputText value="#{opcao.conteudo}" />
+								    </p:column>
+								 
+								    <p:column headerText="Action">
+								    	<p:commandButton actionListener="#{surveyController.removerOpcao(opcao, index)}" value="Delete" update="tableOpcao" styleClass="btn btn-default"  icon="ui-icon-trash" >
+								    			<p:confirm header="Alert" message="Confirm ?" icon="ui-icon-alert" />
+								    	</p:commandButton>
+								    </p:column>
+								</p:dataTable>
+							</ui:fragment>
+						</h:panelGrid>
+						
+						<br/>
+						
+						<p:commandButton action="#{surveyController.salvar()}" value="Save" styleClass="btn btn-default" ajax="false" icon="ui-icon-plus" />
+					</div>
+	
+				</div>
+			
+			</div>
+			
+			<div class="row">
+			
+				<div class="panel panel-default">
+				
+					<div class="panel-heading">
+						List Of Surveys
+					</div>
+					<div class="panel-body">
+					
+						<div class="col-sm-12">
+					
+							<p:dataTable id="tablePerguntas" var="pergunta" value="#{surveyController.formulario.lista}">
+							    <p:column headerText="Text">
+							        <h:outputText value="#{pergunta.texto}" />
+							    </p:column>
+							 
+							    <p:column headerText="Desc">
+							        <h:outputText value="#{pergunta.descricao}" />
+							    </p:column>
+							    
+							    <p:column headerText="Kind">
+							        <h:outputText value="#{pergunta.tipoEnquete.chave}" />
+							    </p:column>
+							 
+							    <p:column headerText="Action">
+							    	<p:commandButton actionListener="#{surveyController.remover(pergunta)}" value="Delete" update="tablePerguntas" styleClass="btn btn-default"  icon="ui-icon-trash" >
+							    		<p:confirm header="Alert" message="Confirm Delete" icon="ui-icon-alert" />
+							    	</p:commandButton>
+							    </p:column>
+							    
+							</p:dataTable>
+						
+						</div>
+						
+					</div>
+				
+				</div>
+			
+			</div>
+			
+		</div>
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+		
+	        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+	        
+	        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	        
+	    </p:confirmDialog>
+		
+	</h:form>
+
+    </h:body>
+     
+</html>
