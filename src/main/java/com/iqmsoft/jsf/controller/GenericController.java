@@ -40,7 +40,7 @@ public abstract class GenericController<E extends BaseEntity, F extends GenericF
 
 		this.iniciarCampos();
 
-		this.mostrarMensagem("Item saved Success", "Sucesso", FacesMessage.SEVERITY_INFO);
+		this.mostrarMensagem("Item saved Success", "Success", FacesMessage.SEVERITY_INFO);
 
 	}
 
@@ -48,7 +48,7 @@ public abstract class GenericController<E extends BaseEntity, F extends GenericF
 
 		this.getService().delete(entidade);
 
-		this.mostrarMensagem("Item Deleted Success", "Sucesso", FacesMessage.SEVERITY_INFO);
+		this.mostrarMensagem("Item Deleted Success", "Success", FacesMessage.SEVERITY_INFO);
 
 		this.iniciarCampos();
 
